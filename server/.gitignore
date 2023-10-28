@@ -1,0 +1,16 @@
+# Ignore Python bytecode files
+__pycache__/
+*.pyc
+
+# Ignore database files
+*.sqlite3
+
+# Ignore development and local settings
+*.log
+
+# Ignore static and media files
+/static/
+/media/
+
+
+
