@@ -1,38 +1,56 @@
-version: '3'
+  version: '3'
 
-services:
-  django-backend:
-    container_name: backend 
-    build:
-      context: ./server
-    ports:
-      - "8000:8000"
-    depends_on:
-      - postgres
-    volumes:
-      - ./server:/app
+  services:
+    django-backend:
+      container_name: backend 
+      restart : always 
+      build:
+        context: ./server
+      ports:
+        - "8000:8000"
+      depends_on:
+        - postgres
+        - redis 
+      volumes:
+        - ./server:/app
+      environment:
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
 
-  chess-frontend:
-    container_name: frontend
-    build:
-      context: ./chess-front
-      target: development  
-    ports:
-      - "5173:5173"
-    volumes:
-      - ./chess-front:/usr/src/app
+    chess-frontend:
+      container_name: frontend
+      restart : always 
+      build:
+        context: ./chess-front
+        target: development  
+      ports:
+        - "5173:5173"
+      volumes:
+        - ./chess-front:/usr/src/app
 
-  postgres:
-    container_name: db 
-    image: postgres:latest
-    environment:
-      POSTGRES_DB: user
-      POSTGRES_USER: komal
-      POSTGRES_PASSWORD: komal
-    ports:
-      - "5432:5432"
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
+    postgres:
+      container_name: db 
+      restart : always 
+      image: postgres:latest
+      environment:
+        POSTGRES_DB: user
+        POSTGRES_USER: komal
+        POSTGRES_PASSWORD: komal
+      ports:
+        - "5432:5432"
+      volumes:
+        - postgres_data:/var/lib/postgresql/data
+      # command: ["./init-db.sh"]
 
-volumes:
-  postgres_data:
+    redis :
+      container_name: redis 
+      image: redis:latest
+      restart : always 
+      ports:
+        - "6379:6379"
+      # volumes:
+      #   - ./redis.conf:/etc/redis/redis.conf
+      # command: ["redis-server", "/etc/redis/redis.conf"]
+
+  volumes:
+    postgres_data:

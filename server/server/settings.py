@@ -33,6 +33,8 @@ ALLOWED_HOSTS = [os.getenv('ALLOWED_HOSTS') , 'localhost']
 # Application definition 
 
 INSTALLED_APPS = [
+    'daphne' ,
+    'socket_config',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -70,6 +72,8 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'server.wsgi.application'
+ASGI_APPLICATION = 'server.asgi.application'
+
 
 
 # Database
@@ -85,6 +89,19 @@ DATABASES = {
         'PORT': '5432',         
     } 
 }
+# REDIS_HOST = os.getenv('REDIS_HOST', 'redis')
+# REDIS_PORT = int(os.getenv('REDIS_PORT', 6379))
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            "hosts": [
+                # (REDIS_HOST, REDIS_PORT) , 
+                (os.getenv('REDIS_URL'), os.getenv('REDIS_PORT')),
+            ],
+        },
+    },
+} 
 
 
 # Password validation
