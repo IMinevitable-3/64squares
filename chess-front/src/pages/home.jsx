@@ -1,36 +1,39 @@
-import Chessboard from 'chessboardjsx'
-import { useEffect } from 'react';
-import { WEB_SOCKET , WEB_SOCKET_PORT } from '../utils/config';
-const  Index = ()=>{
-    
-        useEffect(() => {
-            
-            // const socket = new WebSocket('ws://172.19.0.5:8000/ws/lobby/');
-            const socket = new WebSocket(`ws://${WEB_SOCKET}:${WEB_SOCKET_PORT}/ws/lobby/`);
-             
-            socket.onopen = () => {
-                console.log('WebSocket connection opened');
-            };
-    
-            socket.onmessage = (event) => {
-                console.log('Message from server:', event.data);
-            };
-    
-            socket.onclose = () => {
-                console.log('WebSocket connection closed');
-            };
-    
-            return () => {
-                // Cleanup the WebSocket connection when the component unmounts
-                socket.close();
-            };
-        }, []);
-    
-   
-    return(
+import Chessboard from "chessboardjsx";
+import { useEffect, useContext, useState } from "react";
+import { WEB_SOCKET, WEB_SOCKET_PORT } from "../utils/config";
+import '../assets/loading.css'
+const Index = () => {
+  const [Work, setWork] = useState("idle");
+
+  const handleConnection = () => {
+    const socket = new WebSocket(
+      `ws://${WEB_SOCKET}:${WEB_SOCKET_PORT}/ws/lobby/`
+    );
+
+    setWork("connecting");
+    socket.onopen = () => {
+      console.log("WebSocket connection opened");
+    };
+
+    socket.onmessage = (event) => {
+      console.log("Message from server:", event.data);
+    };
+
+    socket.onclose = () => {
+      console.log("WebSocket connection closed");
+    };
+  };
+  return (
+    <>
+      {Work === "connecting" ? (
+        <div className="lds-facebook"><div></div><div></div><div></div></div>
+      ) : Work === "idle" ? (
         <>
-            <Chessboard position="start" />
+          <Chessboard position="start" />
+          <button onClick={handleConnection}>Play</button>
         </>
-    )
-}
-export default Index
+      ) : null}
+    </>
+  );
+};
+export default Index;
