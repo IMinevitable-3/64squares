@@ -5,7 +5,7 @@ import '../assets/loading.css'
 const Index = () => {
   const [Work, setWork] = useState("idle");
 
-  const handleConnection = () => {
+  const handleConnection = () => { 
     const socket = new WebSocket(
       `ws://${WEB_SOCKET}:${WEB_SOCKET_PORT}/ws/lobby/`
     );
