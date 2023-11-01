@@ -28,6 +28,10 @@ class LobbyConsumer(AsyncWebsocketConsumer):
         updated_record.channel_name_2 = channel_name_2
         updated_record.save()
         return id 
+    @database_sync_to_async
+    def getGroupId(self , channel_name):
+        if Game.objects.get(channel_name_1 = channel_name).gameid == None :
+            return Game.objects.get(channel_name_2 = channel_name).gameid
 
     async def connect(self):
         # Get the unique channel name
@@ -55,8 +59,9 @@ class LobbyConsumer(AsyncWebsocketConsumer):
 
     async def disconnect(self, close_code):
         # Remove the consumer from the group when disconnected
+        id  = await self.getGroupId(self.channel_name) 
         await self.channel_layer.group_discard(
-            'some_group',  # Specify the group name
+            id,  # Specify the group name
             self.channel_name
         )
 
@@ -84,9 +89,30 @@ class LobbyConsumer(AsyncWebsocketConsumer):
         await self.send(text_data=message)
 
 class GameConsumer(AsyncWebsocketConsumer):
-    async def connect(self):
-        await self.accept()
+    #Checks whether game with particular id exists
+    @database_sync_to_async
+    def validate_connection(self,game_id  ,channel_name):
+        obj = Game.objects.get(gameid = game_id)
+        if obj :
+            #channel_1 has arrived so i am channel_2
+            if obj.channel_name_2 == None :
+                obj.channel_name_2 = channel_name 
+            #I am the one
+            else :
+                obj.channel_name_2 = None
+                obj.channel_name_1 = channel_name
+            return True 
+        return False 
 
+            
+
+    async def connect(self):
+        path_components = self.scope["path"].strip("/").split("/")
+        game_id = path_components[-1]
+        exists = await self.validate_connection(game_id,self.channel_name)
+        if exists:
+            await self.accept()
+            
     async def disconnect(self, close_code):
         pass
 
