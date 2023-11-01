@@ -40,6 +40,8 @@ class LobbyConsumer(AsyncWebsocketConsumer):
                 id,  
                 self.channel_name
             )
+            await self.send_group(id , id) 
+
         else :
             # id = "".join([chr(random.randint(65,91)) for c in range(10)])
             id  = Generator.generate_valid_group_name()
