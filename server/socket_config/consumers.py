@@ -137,16 +137,16 @@ class MyGameConsumer(AsyncWebsocketConsumer):
         if exists:
             await self.accept()
             color = random.randint(0, 1)
-            await self.send_group({"color": color} , game_id) #creator color assignment
-            await self.send(text_data=json.dumps({"color": color^1})) #joiner color assignment
+            await self.send_group({"type":"color" ,"payload":{ "color": color} } , game_id) #creator color assignment
+            await self.send(text_data=json.dumps({"type":"color" ,"payload":{ "color": color^1} })) #joiner color assignment
             await self.channel_layer.group_add(game_id, self.channel_name) #add  all to group
-            await self.send_group({"message":"start"}, game_id)  # start game ..
+            await self.send_group({"type":"start" , "payload":{}}, game_id)  # start game ..
 
         else:
             await self.accept()
             await self.channel_layer.group_add(game_id, self.channel_name)
             await self.addDB(game_id, self.channel_name)
-            await self.send(text_data=json.dumps({"message": "wait"}))
+            await self.send(text_data=json.dumps({"type": "wait" , "payload":{}}))
 
     async def disconnect(self, close_code):
         # Remove the consumer from the group when disconnected
@@ -158,7 +158,10 @@ class MyGameConsumer(AsyncWebsocketConsumer):
         # Receive and process the incoming message
 
         # Broadcast the message to all clients in the group
-        await self.send_group(text_data, group="some_group")
+        path = self.scope["path"]
+        game_id = path.strip("/").split("/")[-1]
+        # print(text_data)
+        await self.send_group(json.loads(text_data), group=game_id) 
 
     async def send_group(self, message, group):
         # Send message to a specific group
