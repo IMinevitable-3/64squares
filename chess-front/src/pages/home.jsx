@@ -3,6 +3,7 @@ import { useEffect, useContext, useState } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { WEB_SOCKET, WEB_SOCKET_PORT } from "../utils/config";
 import { Load } from "./loading";
+import generateRandomString from '../utils/groupGenerator'
 const Index = () => {
   const [Work, setWork] = useState("idle");
   const navigate = useNavigate();
@@ -29,6 +30,11 @@ const Index = () => {
       console.log("WebSocket connection closed");
     };
   };
+  const handleCreate = () =>{
+    const GAME = generateRandomString(5) 
+    from = from +'created/'+ GAME +'/' ;
+    navigate(from , {replace:true}) ;
+  }
   return (
     <>
       {Work === "connecting" ? (
@@ -37,6 +43,9 @@ const Index = () => {
         <>
           <Chessboard position="start" />
           <button onClick={handleConnection}>Play</button>
+          <br />
+          <button onClick={handleCreate}>Create Game</button>
+
         </>
       ) : null}
     </>
