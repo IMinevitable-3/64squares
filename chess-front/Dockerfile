@@ -5,9 +5,7 @@ RUN npm install
 
 FROM  base AS development 
 COPY . .
-COPY update_env.sh /usr/src/app/
 EXPOSE 5173
-RUN chmod +x /usr/src/app/update_env.sh
 CMD ["sh", "-c", "npm run dev"]
 FROM base AS production
 COPY . .
