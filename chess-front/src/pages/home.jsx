@@ -42,7 +42,7 @@ const Index = () => {
       ) : Work === "idle" ? (
         <>
           <Chessboard position="start" />
-          <button onClick={handleConnection}>Play</button>
+          {/* <button onClick={handleConnection}>Play</button>  After lobby implementation */}
           <br />
           <button onClick={handleCreate}>Create Game</button>
 
