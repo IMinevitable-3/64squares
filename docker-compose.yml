@@ -29,7 +29,7 @@ services:
       - "5173:5173"
     volumes:
       - ./chess-front:/usr/src/app
-      - exclude:/app/node_modules/
+      - exclude:/usr/src/app//node_modules/
 
     depends_on:
       - django-backend
