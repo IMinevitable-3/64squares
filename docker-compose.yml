@@ -28,8 +28,8 @@ services:
     ports:
       - "5173:5173"
     volumes:
-      - ./chess-front:/usr/src/app
-      - exclude:/usr/src/app//node_modules/
+      - ./chess-front:/app
+      - exclude:/app/node_modules/
 
     depends_on:
       - django-backend
